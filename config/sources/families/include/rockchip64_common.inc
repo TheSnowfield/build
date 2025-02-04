@@ -178,6 +178,7 @@ prepare_boot_configuration() {
 			;;
 		only-blobs)
 			UBOOT_TARGET_MAP="u-boot-dtb.bin;;idbloader.bin uboot.img trust.bin"
+			UBOOT_RKLOADER_ADDR=${UBOOT_RKLOADER_ADDR:="0x200000"}
 			;;
 		binman)
 			UBOOT_TARGET_MAP="BL31=$RKBIN_DIR/$BL31_BLOB ROCKCHIP_TPL=$RKBIN_DIR/$DDR_BLOB;;u-boot-rockchip.bin"
@@ -238,7 +239,7 @@ uboot_custom_postprocess() {
 			tempfile=$(mktemp)
 			run_host_command_logged tools/mkimage -n "${BOOT_SOC_MKIMAGE}" -T rksd -d $RKBIN_DIR/$DDR_BLOB idbloader.bin
 			cat $RKBIN_DIR/$MINILOADER_BLOB >> idbloader.bin
-			run_host_x86_binary_logged $RKBIN_DIR/tools/loaderimage --pack --uboot ./u-boot-dtb.bin uboot.img 0x200000
+			run_host_x86_binary_logged $RKBIN_DIR/tools/loaderimage --pack --uboot ./u-boot-dtb.bin uboot.img $UBOOT_RKLOADER_ADDR
 			run_host_x86_binary_logged $RKBIN_DIR/tools/trust_merger --replace bl31.elf $RKBIN_DIR/$BL31_BLOB trust.ini
 			;;
 
